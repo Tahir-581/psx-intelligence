@@ -1,0 +1,57 @@
+name: Ingest SEC 13F Data
+
+on:
+  schedule:
+    - cron: '0 6 1 2,5,8,11 *'
+  workflow_dispatch:
+    inputs:
+      full_ingest:
+        description: 'Run full quarterly 13F ZIP ingest'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -e .
+
+      - name: Run migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_SYNC: ${{ secrets.DATABASE_URL_SYNC }}
+        run: alembic upgrade head
+
+      - name: Ingest latest 13F quarter
+        if: github.event_name == 'schedule' || inputs.full_ingest == true
+        env:
+          DATABASE_URL_SYNC: ${{ secrets.DATABASE_URL_SYNC }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m scripts.ingest_sec_13f
+
+      - name: Refresh ticker map
+        env:
+          DATABASE_URL_SYNC: ${{ secrets.DATABASE_URL_SYNC }}
+        run: python -m scripts.ingest_sec_tickers
+
+      - name: Delta sync
+        env:
+          DATABASE_URL_SYNC: ${{ secrets.DATABASE_URL_SYNC }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m scripts.ingest_sec_delta
+
+      - name: Ingest Form 4 insiders
+        env:
+          DATABASE_URL_SYNC: ${{ secrets.DATABASE_URL_SYNC }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          SEC_FORM4_COUNT: '200'
+        run: python -m scripts.ingest_sec_form4

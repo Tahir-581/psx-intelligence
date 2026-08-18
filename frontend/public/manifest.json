@@ -1,0 +1,18 @@
+{
+  "name": "PSX Intelligence Platform",
+  "short_name": "PSX Intel",
+  "description": "Pakistan Stock Exchange market data dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#18181b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/globe.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
