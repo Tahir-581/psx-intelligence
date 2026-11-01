@@ -74,3 +74,6 @@ agent.log
 .cursor/
 .vscode/
 .DS_Store
+
+# Local backfill checkpoints
+scripts/.backfill_*_checkpoint.json

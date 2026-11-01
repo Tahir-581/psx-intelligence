@@ -1,6 +1,17 @@
 # PSX Intelligence Platform
 
-Local-first PSX market data ingestion platform with TimescaleDB, FastAPI, Celery, and Next.js dashboard.
+A market-data and research platform for the Pakistan Stock Exchange (PSX), with a US "smart money" module built on SEC 13F and Form 4 filings. It scrapes and normalizes prices, announcements, financial-statement PDFs, news, macro series and social posts. It stores them in TimescaleDB, enriches them with NLP (FinBERT sentiment, topic tagging, entity linking, significance scoring and Anthropic-API summaries), and serves everything through a FastAPI API and a Next.js dashboard.
+
+## Highlights
+
+- **Ingestion:** PSX symbols, EOD prices, live LTP, announcements and PDF financials/insider/ownership parsers; news RSS; SBP macro data; Twitter/Reddit/Telegram; SEC EDGAR 13F, delta and Form 4. Scheduled with Celery Beat and monitored in Flower.
+- **Storage:** PostgreSQL + TimescaleDB hypertables, with Alembic migrations.
+- **API:** FastAPI REST and WebSocket live prices covering snapshots, fundamentals and ratios, screener, alerts, portfolio, watchlists, notifications, webhooks and API keys, with rate limiting.
+- **SaaS layer:** Clerk JWT auth, Free/Pro entitlements, and Stripe or LemonSqueezy billing.
+- **Frontend:** Next.js, TanStack Query and lightweight-charts.
+- **Tests:** pytest unit and integration tests, plus GitHub Actions CI.
+
+**Stack:** Python · FastAPI · SQLAlchemy · Alembic · PostgreSQL/TimescaleDB · Redis · Celery · Hugging Face (FinBERT) · Anthropic API · Next.js · Clerk · Stripe · Docker · Railway
 
 ## Quick start (Docker)
 
@@ -321,3 +332,8 @@ Manual checks:
 - [ ] Clerk production instance configured
 - [ ] DB backups configured
 - [ ] Sentry DSN set in production
+
+
+## License
+
+MIT
